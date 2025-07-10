@@ -17,3 +17,4 @@ smsir-python==1.0.8
 sqlparse==0.5.3
 tzdata==2025.2
 urllib3==2.5.0
+gunicorn==20.1.0
