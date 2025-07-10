@@ -1,0 +1,27 @@
+{% extends 'staff_panel/base_staff.html' %}
+
+{% block title %}ایجاد تیکت جدید{% endblock %}
+{% block page_title %}ایجاد تیکت جدید{% endblock %}
+
+{% block content %}
+<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow max-w-2xl mx-auto">
+    <form method="post" class="space-y-6">
+        {% csrf_token %}
+        <div>
+            <label for="{{ form.title.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ form.title.label }}</label>
+            {{ form.title }}
+            {% if form.title.errors %}<p class="text-red-500 text-xs mt-1">{{ form.title.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+            <label for="{{ form.message.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ form.message.label }}</label>
+            {{ form.message }}
+            {% if form.message.errors %}<p class="text-red-500 text-xs mt-1">{{ form.message.errors.0 }}</p>{% endif %}
+        </div>
+        <div class="flex justify-end">
+            <button type="submit" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700 transition-colors">
+                ارسال تیکت
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

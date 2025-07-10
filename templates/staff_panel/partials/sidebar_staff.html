@@ -1,0 +1,41 @@
+{% load static %}
+<div class="flex items-center justify-center h-16 bg-green-600 text-white shadow-md">
+    {% if request.user.user_type == 'ADMIN' or request.user.is_superuser %}
+        <h1 class="text-xl font-bold">پنل مدیریت کل</h1>
+        <img src="{% static 'images/your-logo.png' %}" alt="لوگوی اعتبارینو" class="h-10 w-auto ml-3">
+    {% else %}
+        <h1 class="text-xl font-bold">پنل کارشناس</h1>
+        <img src="{% static 'images/your-logo.png' %}" alt="لوگوی اعتبارینو" class="h-10 w-auto ml-3">
+    {% endif %}
+</div>
+
+
+<div class="flex flex-col flex-grow p-4 bg-white dark:bg-gray-800">
+    <nav class="flex-grow">
+        {% if request.user.user_type == 'ADMIN' or request.user.is_superuser %}
+            <a class="flex items-center px-4 py-2 mt-2 rounded-md {% if request.resolver_match.url_name == 'admin_dashboard' %}text-gray-800 bg-gray-200 dark:text-white dark:bg-gray-700{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700{% endif %}" href="/staff/admin-dashboard/">
+                <span class="ml-3">داشبورد</span>
+            </a>
+        {% endif %}
+        <a class="flex items-center px-4 py-2 mt-2 rounded-md {% if request.resolver_match.url_name == 'staff_dashboard' %}text-gray-800 bg-gray-200 dark:text-white dark:bg-gray-700{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700{% endif %}" href="{% url 'staff_dashboard' %}">
+            <span class="ml-3">بررسی درخواست‌ها</span>
+        </a>
+        <a class="flex items-center px-4 py-2 mt-2 rounded-md {% if request.resolver_match.url_name == 'customer_list' %}text-gray-800 bg-gray-200 dark:text-white dark:bg-gray-700{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700{% endif %}" href="{% url 'customer_list' %}">
+            <span class="ml-3">اطلاعات مشتریان</span>
+        </a>
+        <a class="flex items-center px-4 py-2 mt-2 rounded-md {% if 'ticket' in request.resolver_match.url_name %}text-gray-800 bg-gray-200 dark:text-white dark:bg-gray-700{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700{% endif %}" href="{% url 'staff_ticket_list' %}">
+            <span class="ml-3">تیکت‌های پشتیبانی</span>
+        </a>
+        {% if request.user.user_type == 'ADMIN' or request.user.is_superuser %}
+            <a class="flex items-center px-4 py-2 mt-2 rounded-md {% if request.resolver_match.url_name == 'admin_user_list' %}text-gray-800 bg-gray-200 dark:text-white dark:bg-gray-700{% else %}text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700{% endif %}" href="{% url 'admin_user_list' %}">
+                <span class="ml-3">مدیریت کاربران</span>
+            </a>
+            <a class="flex items-center px-4 py-2 mt-2 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md" href="/admin/">
+                <span class="ml-3">مدیریت پیشرفته (Django)</span>
+            </a>
+        {% endif %}
+    </nav>
+    <a class="flex items-center px-4 py-2 mt-2 text-red-600 hover:bg-red-100 dark:hover:bg-gray-700 dark:text-red-400 rounded-md" href="{% url 'logout' %}">
+        <span class="ml-3">خروج از حساب</span>
+    </a>
+</div>

@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}پنل کارشناس{% endblock %} - اعتبارینو بازرگانی محمدی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@latest"></script> {# Add this line #}
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+    <script>
+        function layout() {
+            return {
+                sidebarOpen: false,
+                isDarkMode: localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches),
+                isDesktop: window.innerWidth >= 768,
+
+                init() {
+                    if (this.isDarkMode) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                    window.addEventListener('resize', () => {
+                        this.isDesktop = window.innerWidth >= 768;
+                        if (this.isDesktop) {
+                            this.sidebarOpen = false;
+                        }
+                    });
+                },
+                
+                toggleTheme() {
+                    this.isDarkMode = !this.isDarkMode;
+                    if (this.isDarkMode) {
+                        document.documentElement.classList.add('dark');
+                        localStorage.theme = 'dark';
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        localStorage.theme = 'light';
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 font-sans" x-data="layout()" x-init="init()" dir="rtl">
+    <div class="flex h-screen bg-gray-100 dark:bg-gray-900">
+        
+        {# Sidebar for both desktop and mobile #}
+        <div x-show="sidebarOpen || isDesktop"
+             x-cloak
+             class="fixed inset-y-0 right-0 z-30 flex w-64 flex-col bg-white shadow-lg dark:bg-gray-800 md:relative"
+             x-transition:enter="transition ease-out duration-300 transform"
+             x-transition:enter-start="translate-x-full md:translate-x-0" {# برای وقتی که وارد می‌شود (مثلا در موبایل از راست می‌آید) #}
+             x-transition:enter-end="translate-x-0"
+             x-transition:leave="transition ease-in duration-300 transform"
+             x-transition:leave-start="translate-x-0"
+             x-transition:leave-end="translate-x-full md:translate-x-0" {# برای وقتی که خارج می‌شود (در موبایل به راست می‌رود) #}
+             @click.away="if (!isDesktop) sidebarOpen = false"
+        >
+            {% include 'staff_panel/partials/sidebar_staff.html' %}
+        </div>
+
+        {# Overlay for mobile sidebar - this one also needs animation if you want it to fade #}
+        <div x-show="sidebarOpen && !isDesktop"
+             x-cloak
+             @click="sidebarOpen = false"
+             class="fixed inset-0 z-20 bg-black bg-opacity-50 md:hidden"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-50"
+             x-transition:leave="transition ease-in duration-300"
+             x-transition:leave-start="opacity-50"
+             x-transition:leave-end="opacity-0"
+        ></div>
+        
+        <div class="flex flex-1 flex-col">
+            <header class="flex h-16 flex-shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 dark:border-gray-700 dark:bg-gray-800 sm:px-6">
+                <div class="flex items-center">
+                    {# Mobile Menu Button - Show only on mobile #}
+                    <button @click="sidebarOpen = !sidebarOpen" class="text-gray-600 dark:text-gray-300 focus:outline-none md:hidden">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                    {# Page Title #}
+                    <h2 class="mr-4 hidden text-lg font-semibold text-gray-700 dark:text-gray-200 sm:block">{% block page_title %}داشبورد{% endblock %}</h2>
+                </div>
+                {# User Info and Theme Toggle #}
+                <div class="flex items-center space-x-4 space-x-reverse">
+                    <button @click="toggleTheme" class="rounded-full p-2 text-gray-600 hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-gray-700">
+                        <svg x-show="!isDarkMode" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        <svg x-show="isDarkMode" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                    </button>
+                    <div class="text-sm">
+                        <span class="font-semibold text-gray-800 dark:text-gray-100">{{ request.user.get_full_name|default:request.user.username }}</span>
+                    </div>
+                </div>
+            </header>
+            <main class="flex-grow overflow-auto p-4 sm:p-6" id="main-content"> {# Add an ID here #}
+                {% if messages %}
+                    <div class="mb-6">
+                        {% for message in messages %}
+                            <div class="rounded-lg p-4 text-center text-sm sm:text-base {% if message.tags == 'success' %} bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 {% elif message.tags == 'info' %} bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300 {% else %} bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 {% endif %}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <div class="fade-in-up">
+                    {% block content %}{% endblock %}
+                </div>
+            </main>
+        </div>
+    </div>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

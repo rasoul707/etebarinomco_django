@@ -1,0 +1,30 @@
+{% extends 'base_form.html' %}
+{% load static %}
+
+{% block title %}ورود پرسنل{% endblock %}
+
+{% block content %}
+<div class="text-center mb-8">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">ورود پرسنل / مدیر</h1>
+    <p class="text-gray-500 dark:text-gray-400 mt-2">اعتبارینو بازرگانی محمدی</p>
+</div>
+
+{% if form.non_field_errors %}
+    <div class="p-3 mb-4 rounded-lg bg-red-100 text-red-800 text-sm text-center dark:bg-red-900 dark:text-red-300" role="alert">
+        {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+    </div>
+{% endif %}
+
+<form method="post" class="space-y-6">
+    {% csrf_token %}
+    <div>
+        <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ form.username.label }}</label>
+        {{ form.username }}
+    </div>
+    <div>
+        <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ form.password.label }}</label>
+        {{ form.password }}
+    </div>
+    <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition-all dark:bg-green-700 dark:hover:bg-green-800">ورود به پنل</button>
+</form>
+{% endblock %}

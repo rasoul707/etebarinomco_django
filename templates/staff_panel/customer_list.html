@@ -1,0 +1,96 @@
+{% extends 'staff_panel/base_staff.html' %}
+{% load static %}
+{% load jalali_tags %}
+
+{% block title %}اطلاعات مشتریان{% endblock %}
+{% block page_title %}اطلاعات مشتریان{% endblock %}
+
+{% block content %}
+<div class="bg-white dark:bg-gray-800 p-4 sm:p-6 rounded-lg shadow">
+    <div class="mb-6">
+        <form method="get" class="flex items-center">
+            <input type="text" name="q" value="{{ search_query }}" class="w-full p-2 border bg-gray-50 dark:bg-gray-700 dark:border-gray-600 rounded-r-md focus:ring-blue-500 focus:border-blue-500" placeholder="جستجو بر اساس نام، کد ملی یا شماره تلفن...">
+            <button type="submit" class="bg-blue-600 text-white p-2 rounded-l-md hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600">
+                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </button>
+        </form>
+    </div>
+    <div class="hidden md:block overflow-x-auto">
+        <table class="min-w-full text-sm text-right">
+            <thead class="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 uppercase">
+                <tr>
+                    <th class="p-3">نام کامل</th>
+                    <th class="p-3">شماره تلفن</th>
+                    <th class="p-3">ایمیل</th>
+                    <th class="p-3">تاریخ عضویت</th>
+                    <th class="p-3">کد رهگیری پستی</th>
+                    <th class="p-3 text-center">مشاهده درخواست</th>
+                    <th class="p-3 text-center">چاپ پرونده</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-600 text-gray-700 dark:text-gray-200">
+                {% for customer in customers %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td class="p-3 font-medium">{{ customer.get_full_name }}</td>
+                    <td class="p-3" dir="ltr">{{ customer.phone_number }}</td>
+                    <td class="p-3">{{ customer.email }}</td>
+                    <td class="p-3">{{ customer.date_joined|to_jalali:"%Y/%m/%d" }}</td>
+                    <td class="p-3 font-mono" dir="ltr">
+                        {{ customer.creditrequest_set.first.postal_tracking_code|default:"-" }}
+                    </td>
+                    <td class="p-3 text-center">
+                        {% with customer.creditrequest_set.first as credit_request %}
+                            {% if credit_request %}
+                                <a href="{% url 'staff_request_detail' credit_request.id %}" class="text-blue-600 hover:underline dark:text-blue-400">بررسی</a>
+                            {% else %}
+                                <span class="text-gray-400 dark:text-gray-500 text-xs">بدون درخواست</span>
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td class="p-3 text-center">
+                        <a href="{% url 'print_customer_info' customer.id %}" target="_blank" class="text-green-600 hover:underline dark:text-green-400">چاپ</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="p-4 text-center text-gray-500 dark:text-gray-400">مشتری با مشخصات وارد شده یافت نشد.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="md:hidden space-y-4">
+        {% for customer in customers %}
+        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow">
+            <div class="flex justify-between items-center">
+                <h4 class="font-bold text-gray-800 dark:text-gray-100">{{ customer.get_full_name }}</h4>
+                <div class="flex space-x-4 space-x-reverse">
+                    {% with customer.creditrequest_set.first as credit_request %}
+                        {% if credit_request %}
+                            <a href="{% url 'staff_request_detail' credit_request.id %}" class="text-blue-600 dark:text-blue-400 text-sm hover:underline">بررسی</a>
+                        {% else %}
+                            <span class="text-gray-400 dark:text-gray-500 text-xs">بدون درخواست</span>
+                        {% endif %}
+                    {% endwith %}
+                    <a href="{% url 'print_customer_info' customer.id %}" target="_blank" class="text-green-600 dark:text-green-400 text-sm hover:underline">چاپ</a>
+                </div>
+            </div>
+            <div class="mt-2 text-xs text-gray-600 dark:text-gray-300 space-y-1 border-t dark:border-gray-600 pt-2">
+                <p><span class="font-semibold">تلفن:</span> <span dir="ltr">{{ customer.phone_number }}</span></p>
+                <p><span class="font-semibold">ایمیل:</span> {{ customer.email }}</p>
+                <p><span class="font-semibold">عضویت:</span> {{ customer.date_joined|to_jalali:"%Y/%m/%d" }}</p>
+                {% with customer.creditrequest_set.first as credit_request %}
+                    {% if credit_request and credit_request.postal_tracking_code %}
+                        <p><span class="font-semibold">کد رهگیری:</span> <span class="font-mono" dir="ltr">{{ credit_request.postal_tracking_code }}</span></p>
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="p-4 text-center text-gray-500 dark:text-gray-400">
+            <p>مشتری با مشخصات وارد شده یافت نشد.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

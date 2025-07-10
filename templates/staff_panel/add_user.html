@@ -1,0 +1,66 @@
+{% extends 'staff_panel/base_staff.html' %}
+
+{% block title %}افزودن کاربر جدید{% endblock %}
+{% block page_title %}افزودن کاربر جدید{% endblock %}
+
+{% block content %}
+<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow max-w-2xl mx-auto">
+    <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-6 border-b dark:border-gray-600 pb-4">فرم ایجاد کاربر جدید</h3>
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium">{{ form.first_name.label }}</label>
+                {{ form.first_name }}
+                {% if form.first_name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.first_name.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium">{{ form.last_name.label }}</label>
+                {{ form.last_name }}
+                {% if form.last_name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.last_name.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium">{{ form.email.label }}</label>
+                {{ form.email }}
+                {% if form.email.errors %}<p class="text-red-500 text-xs mt-1">{{ form.email.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label for="{{ form.phone_number.id_for_label }}" class="block text-sm font-medium">{{ form.phone_number.label }}</label>
+                {{ form.phone_number }}
+                {% if form.phone_number.errors %}<p class="text-red-500 text-xs mt-1">{{ form.phone_number.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium">{{ form.password.label }}</label>
+                {{ form.password }}
+                {% if form.password.errors %}<p class="text-red-500 text-xs mt-1">{{ form.password.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium">{{ form.password2.label }}</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}<p class="text-red-500 text-xs mt-1">{{ form.password2.errors.0 }}</p>{% endif %}
+            </div>
+            <div>
+                <label class="block text-sm font-medium">{{ form.user_type.label }}</label>
+                {{ form.user_type }}
+            </div>
+            <div>
+                <label class="block text-sm font-medium">{{ form.gender.label }}</label>
+                <div class="flex items-center space-x-4 space-x-reverse mt-2"> {# This is the key change #}
+                    {% for radio in form.gender %}
+                    <div class="flex items-center">
+                        {{ radio.tag }}
+                        <label for="{{ radio.id_for_label }}" class="mr-2 text-sm">{{ radio.choice_label }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if form.gender.errors %}<p class="text-red-500 text-xs mt-1">{{ form.gender.errors.0 }}</p>{% endif %} {# Added error handling for gender #}
+            </div>
+        </div>
+
+        <div class="flex justify-end pt-4">
+            <button type="submit" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700">ایجاد کاربر</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

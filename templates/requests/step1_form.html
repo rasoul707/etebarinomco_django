@@ -1,0 +1,75 @@
+{% extends 'base_form.html' %}
+{% load static %}
+
+{% block title %}مرحله اول: اطلاعات فردی{% endblock %}
+{% block form_width %}max-w-4xl{% endblock %}
+
+{% block head_extra %}
+    {{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="text-center mb-8">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">فرم مشخصات فردی</h1>
+    <p class="text-gray-500 dark:text-gray-300 mt-2">لطفاً تمام اطلاعات را با دقت و بر اساس مدارک شناسایی وارد نمایید.</p>
+</div>
+<form method="post" class="space-y-8">
+    {% csrf_token %}
+    
+
+    <fieldset class="border-t pt-4 dark:border-gray-600">
+        <legend class="text-lg font-semibold px-2 text-gray-800 dark:text-gray-200">اطلاعات هویتی</legend>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 mt-4">
+            <div><label class="block text-sm font-medium">{{ form.full_name.label }}</label>{{ form.full_name }}</div>
+            <div><label class="block text-sm font-medium">{{ form.father_name.label }}</label>{{ form.father_name }}</div>
+            <div><label class="block text-sm font-medium">{{ form.birth_date.label }}</label>{{ form.birth_date }}</div>
+            <div><label class="block text-sm font-medium">{{ form.national_id.label }}</label>{{ form.national_id }}</div>
+            <div><label class="block text-sm font-medium">{{ form.card_serial.label }}</label>{{ form.card_serial }}</div>
+            <div><label class="block text-sm font-medium">{{ form.birth_place_province.label }}</label>{{ form.birth_place_province }}</div>
+            <div><label class="block text-sm font-medium">{{ form.birth_place_city.label }}</label>{{ form.birth_place_city }}</div>
+        </div>
+    </fieldset>
+
+
+    <fieldset class="border-t pt-4 dark:border-gray-600">
+        <legend class="text-lg font-semibold px-2 text-gray-800 dark:text-gray-200">اطلاعات تماس</legend>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mt-4">
+            <div><label class="block text-sm font-medium">شماره موبایل (ثبت شده)</label><input type="text" value="{{ request.user.phone_number }}" class="w-full mt-1 p-2 border bg-gray-200 dark:bg-gray-600 rounded-md" disabled></div>
+            <div><label class="block text-sm font-medium">{{ form.landline_number.label }}</label>{{ form.landline_number }}</div>
+        </div>
+    </fieldset>
+
+
+    <fieldset class="border-t pt-4 dark:border-gray-600">
+        <legend class="text-lg font-semibold px-2 text-gray-800 dark:text-gray-200">آدرس محل سکونت</legend>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4 mt-4">
+            <div><label class="block text-sm font-medium">{{ form.province.label }}</label>{{ form.province }}</div>
+            <div><label class="block text-sm font-medium">{{ form.city.label }}</label>{{ form.city }}</div>
+            <div><label class="block text-sm font-medium">{{ form.area.label }}</label>{{ form.area }}</div>
+            <div class="md:col-span-3"><label class="block text-sm font-medium">{{ form.address_line.label }}</label>{{ form.address_line }}</div>
+            <div><label class="block text-sm font-medium">{{ form.plaque.label }}</label>{{ form.plaque }}</div>
+            <div><label class="block text-sm font-medium">{{ form.unit.label }}</label>{{ form.unit }}</div>
+            <div><label class="block text-sm font-medium">{{ form.postal_code.label }}</label>{{ form.postal_code }}</div>
+        </div>
+    </fieldset>
+
+
+    <fieldset class="border-t pt-4 dark:border-gray-600">
+        <legend class="text-lg font-semibold px-2 text-gray-800 dark:text-gray-200">اطلاعات بانکی</legend>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mt-4">
+            <div><label class="block text-sm font-medium">{{ form.iban.label }}</label>{{ form.iban }}</div>
+            <div><label class="block text-sm font-medium">{{ form.account_number.label }}</label>{{ form.account_number }}</div>
+        </div>
+    </fieldset>
+
+    <div class="flex items-center mt-6">
+        <input type="checkbox" id="terms_agree" name="terms_agree" required
+               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600">
+        <label for="terms_agree" class="ml-2 block text-sm text-gray-900 dark:text-gray-200">
+            با ثبت‌نام و استفاده از خدمات “اعتبارینو بازرگانی محمدی”، شما تایید می‌نمایید که این <a href="{% url 'terms_and_conditions' %}" target="_blank" class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 font-medium">قوانین</a> را مطالعه کرده‌اید و تمامی مفاد آن را پذیرفته‌اید.
+        </label>
+    </div>
+
+    <button type="submit" class="w-full mt-8 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">ثبت اطلاعات و ارسال برای بررسی</button>
+</form>
+{% endblock %}

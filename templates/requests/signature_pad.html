@@ -1,0 +1,51 @@
+{% extends 'base_form.html' %}
+
+{% block title %}ثبت امضای دیجیتال{% endblock %}
+{% block form_width %}max-w-2xl{% endblock %}
+
+{% block head_extra %}
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">امضای دیجیتال</h1>
+    <p class="text-gray-500 dark:text-gray-300 mt-2">لطفاً در کادر زیر، امضای خود را به صورت لمسی یا با موس رسم کنید.</p>
+
+    <form method="post" id="signature-form" class="mt-6">
+        {% csrf_token %}
+        <input type="hidden" name="signature_data" id="signature-data">
+        <div class="bg-white border border-gray-300 rounded-lg">
+            <canvas id="signature-pad" class="w-full h-48"></canvas>
+        </div>
+    </form>
+
+    <div class="flex justify-center gap-4 mt-4">
+        <button id="clear-button" class="bg-gray-300 text-gray-800 font-bold py-2 px-6 rounded-lg hover:bg-gray-400">پاک کردن</button>
+        <button id="save-button" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700">ثبت امضا و ادامه</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const canvas = document.getElementById('signature-pad');
+    const signaturePad = new SignaturePad(canvas, {
+        backgroundColor: 'rgb(255, 255, 255)'
+    });
+
+    document.getElementById('clear-button').addEventListener('click', function () {
+        signaturePad.clear();
+    });
+
+    document.getElementById('save-button').addEventListener('click', function () {
+        if (signaturePad.isEmpty()) {
+            alert("لطفاً ابتدا امضای خود را رسم کنید.");
+        } else {
+            const dataURL = signaturePad.toDataURL('image/png');
+            document.getElementById('signature-data').value = dataURL;
+            document.getElementById('signature-form').submit();
+        }
+    });
+</script>
+{% endblock %}

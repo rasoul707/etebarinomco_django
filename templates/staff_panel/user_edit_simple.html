@@ -1,0 +1,96 @@
+{% extends 'staff_panel/base_staff.html' %}
+{% load static %}
+
+{% block title %}ویرایش جامع کاربر{% endblock %}
+{% block page_title %}ویرایش جامع: {{ user_to_edit.get_full_name|default:user_to_edit.username }}{% endblock %}
+
+{% block head_extra %}
+    {% if request_form %}{{ request_form.media }}{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="space-y-8" x-data="{ deleteModalOpen: false }">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <h3 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">اطلاعات حساب کاربری</h3>
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_user_info">
+            {% if user_form.non_field_errors %}
+                <div class="p-3 rounded-lg bg-red-100 text-red-800 text-sm">{% for error in user_form.non_field_errors %}{{ error }}{% endfor %}</div>
+            {% endif %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {% for field in user_form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-left pt-4 border-t dark:border-gray-600 mt-4">
+                <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700">ذخیره اطلاعات کاربری</button>
+            </div>
+        </form>
+    </div>
+    {% if request_form %}
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <h3 class="text-xl font-bold mb-4 text-gray-800 dark:text-gray-100">اطلاعات درخواست اعتبار</h3>
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="update_credit_info">
+            {% if request_form.non_field_errors %}
+                <div class="p-3 rounded-lg bg-red-100 text-red-800 text-sm">{% for error in request_form.non_field_errors %}{{ error }}{% endfor %}</div>
+            {% endif %}
+            <div class="text-left pt-4 border-t dark:border-gray-600">
+                <button type="submit" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700">ذخیره اطلاعات درخواست</button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <h3 class="text-xl font-bold mb-4">تغییر رمز عبور</h3>
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="change_password">
+            {% if password_form.non_field_errors %}
+                <div class="p-3 rounded-lg bg-red-100 text-red-800 text-sm">{% for error in password_form.non_field_errors %}{{ error }}{% endfor %}</div>
+            {% endif %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for field in password_form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}<p class="text-red-500 text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="text-left">
+                <button type="submit" class="bg-yellow-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-yellow-600">تغییر رمز</button>
+            </div>
+        </form>
+    </div>
+    <div class="bg-red-50 dark:bg-red-900/50 border-l-4 border-red-500 p-4 rounded-lg">
+        <div class="flex items-center justify-between">
+            <div>
+                <h4 class="font-bold text-red-800 dark:text-red-300">حذف حساب کاربری</h4>
+                <p class="text-sm text-red-700 dark:text-red-200 mt-1">این عملیات غیرقابل بازگشت است.</p>
+            </div>
+            <button @click="deleteModalOpen = true" class="bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700">حذف کاربر</button>
+        </div>
+    </div>
+    <div x-show="deleteModalOpen" @click.away="deleteModalOpen = false" class="fixed inset-0 bg-black bg-opacity-50 z-20 flex items-center justify-center p-4" style="display: none;">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md text-center">
+            <h3 class="text-lg font-bold">آیا از حذف این کاربر مطمئن هستید؟</h3>
+            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">با این کار، تمام اطلاعات کاربر از جمله درخواست اعتبار او برای همیشه پاک می‌شود.</p>
+            <div class="mt-6 flex justify-center gap-4">
+                <button @click="deleteModalOpen = false" class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-600 hover:bg-gray-300">انصراف</button>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete_user">
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700">بله، حذف کن</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

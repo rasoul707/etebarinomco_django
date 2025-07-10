@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load jalali_tags %}
+{% block title %}جزئیات تیکت: {{ ticket.title }}{% endblock %}
+{% block page_title %}جزئیات تیکت{% endblock %}
+
+{% block content %}
+<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow max-w-3xl mx-auto">
+    <div class="flex justify-between items-center mb-4 pb-4 border-b border-gray-200 dark:border-gray-600">
+        <div>
+            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">{{ ticket.title }}</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">ایجاد شده در: {{ ticket.created_at|to_jalali:'%Y/%m/%d - %H:%M'}}</p>
+        </div>
+        <span class="font-semibold px-3 py-1 rounded-full text-sm
+            {% if ticket.status == 'open' %}
+                bg-green-100 text-green-800 dark:bg-green-800 dark:text-white
+            {% else %}
+                bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300
+            {% endif %}">
+            {{ ticket.get_status_display }}
+        </span>
+    </div>
+    <div class="space-y-4 mb-6 max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+        {% for message in ticket.messages.all %}
+            <div class="flex {% if message.user == request.user %}justify-end{% else %}justify-start{% endif %}">
+                <div class="max-w-lg p-4 rounded-xl shadow-sm
+                    {% if message.user == request.user %}
+                        bg-blue-600 text-white dark:bg-blue-500
+                    {% else %}
+                        bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-100
+                    {% endif %}">
+                    <p class="text-sm">{{ message.message }}</p>
+                    <p class="text-xs mt-2 opacity-70 text-right">
+                        {{ message.user.get_full_name|default:message.user.username }} - {{ message.created_at|date:"H:i" }}
+                    </p>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-center text-gray-500 dark:text-gray-400">پیامی برای این تیکت ثبت نشده است.</p>
+        {% endfor %}
+    </div>
+    {% if ticket.status == 'open' %}
+    <form method="post" class="border-t border-gray-200 dark:border-gray-600 pt-4">
+        {% csrf_token %}
+        <div>
+            <label for="{{ form.message.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {{ form.message.label }}
+            </label>
+            {{ form.message }}
+            {% if form.message.errors %}
+                <p class="text-red-500 text-sm mt-1">{{ form.message.errors.0 }}</p>
+            {% endif %}
+        </div>
+        <div class="mt-4 flex justify-end">
+            <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition">
+                ارسال پاسخ
+            </button>
+        </div>
+    </form>
+    {% else %}
+    <div class="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-md">
+        <p class="text-gray-600 dark:text-gray-300">این تیکت بسته شده است و امکان ارسال پیام جدید وجود ندارد.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

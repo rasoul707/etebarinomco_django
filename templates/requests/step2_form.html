@@ -1,0 +1,85 @@
+{% extends 'base_form.html' %}
+{% load static %}
+
+{% block title %}مرحله دوم: اطلاعات ضامن{% endblock %}
+{% block form_width %}max-w-3xl{% endblock %}
+{% block head_extra %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/persian-datepicker@1.2.0/dist/css/persian-datepicker.min.css"/>
+    <script src="https://unpkg.com/persian-date@1.1.0/dist/persian-date.min.js"></script>
+    <script src="https://unpkg.com/persian-datepicker@1.2.0/dist/js/persian-datepicker.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="text-center mb-8">
+    <h1 class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-gray-100">اطلاعات ضامن</h1>
+    <p class="text-gray-500 dark:text-gray-300 mt-2">لطفاً مشخصات ضامن خود را با دقت کامل وارد نمایید.</p>
+</div>
+{% if form.non_field_errors %}
+    <div class="p-3 mb-4 rounded-lg bg-red-100 text-red-800 text-sm text-center dark:bg-red-900 dark:text-red-300" role="alert">
+        {% for error in form.non_field_errors %}
+            {{ error }}
+        {% endfor %}
+    </div>
+{% endif %}
+<form method="post" class="space-y-6">
+    {% csrf_token %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+        <div class="md:col-span-2">
+            <label for="{{ form.guarantor_full_name.id_for_label }}" class="block text-sm font-medium">{{ form.guarantor_full_name.label }}</label>
+            {{ form.guarantor_full_name }}
+            {% if form.guarantor_full_name.errors %}<p class="text-red-500 text-xs mt-1">{{ form.guarantor_full_name.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+            <label for="{{ form.guarantor_national_id.id_for_label }}" class="block text-sm font-medium">{{ form.guarantor_national_id.label }}</label>
+            {{ form.guarantor_national_id }}
+            {% if form.guarantor_national_id.errors %}<p class="text-red-500 text-xs mt-1">{{ form.guarantor_national_id.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+            <label for="{{ form.guarantor_card_serial.id_for_label }}" class="block text-sm font-medium">{{ form.guarantor_card_serial.label }}</label>
+            {{ form.guarantor_card_serial }}
+            {% if form.guarantor_card_serial.errors %}<p class="text-red-500 text-xs mt-1">{{ form.guarantor_card_serial.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+            <label for="{{ form.guarantor_birth_date.id_for_label }}" class="block text-sm font-medium">{{ form.guarantor_birth_date.label }}</label>
+            {{ form.guarantor_birth_date }}
+            {% if form.guarantor_birth_date.errors %}<p class="text-red-500 text-xs mt-1">{{ form.guarantor_birth_date.errors.0 }}</p>{% endif %}
+        </div>
+        <div>
+            <label for="{{ form.guarantor_phone_number.id_for_label }}" class="block text-sm font-medium">{{ form.guarantor_phone_number.label }}</label>
+            {{ form.guarantor_phone_number }}
+            {% if form.guarantor_phone_number.errors %}<p class="text-red-500 text-xs mt-1">{{ form.guarantor_phone_number.errors.0 }}</p>{% endif %}
+        </div>
+        <div class="md:col-span-2">
+            <label for="{{ form.guarantor_address.id_for_label }}" class="block text-sm font-medium">{{ form.guarantor_address.label }}</label>
+            {{ form.guarantor_address }}
+            {% if form.guarantor_address.errors %}<p class="text-red-500 text-xs mt-1">{{ form.guarantor_address.errors.0 }}</p>{% endif %}
+        </div>
+        <div class="md:col-span-2">
+            <label for="{{ form.guarantor_credit_score.id_for_label }}" class="block text-sm font-medium">{{ form.guarantor_credit_score.label }}</label>
+            {{ form.guarantor_credit_score }}
+            {% if form.guarantor_credit_score.errors %}<p class="text-red-500 text-xs mt-1">{{ form.guarantor_credit_score.errors.0 }}</p>{% endif %}
+        </div>
+        <div class="md:col-span-2 pt-2">
+            <div class="flex items-center">
+                {{ form.guarantor_consent }}
+                <label for="{{ form.guarantor_consent.id_for_label }}" class="mr-3 text-sm font-medium">{{ form.guarantor_consent.label }}</label>
+            </div>
+            {% if form.guarantor_consent.errors %}<p class="text-red-500 text-xs mt-1">{{ form.guarantor_consent.errors.0 }}</p>{% endif %}
+        </div>
+    </div>
+    <button type="submit" class="w-full mt-8 bg-blue-600 text-white font-bold py-3 rounded-lg hover:bg-blue-700">ذخیره و ادامه</button>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    $(document).ready(function() {
+      $(".pwt-datepicker").persianDatepicker({
+        format: 'YYYY/MM/DD',
+        autoClose: true,
+        initialValue: false
+      });
+    });
+</script>
+{% endblock %}

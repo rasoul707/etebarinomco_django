@@ -1,0 +1,376 @@
+{% extends 'staff_panel/base_staff.html' %}
+{% load static %}
+{% load jalali_tags %}
+{% load request_extras %}
+
+{% block title %}بررسی درخواست {{ credit_request.applicant.get_full_name }}{% endblock %}
+{% block page_title %}بررسی درخواست {{ credit_request.applicant.get_full_name }}{% endblock %}
+
+{% block head_extra %}
+    {{ form.media }}
+{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <div
+        class="bg-blue-50 dark:bg-gray-700/50 p-6 rounded-lg shadow border-r-4 border-blue-500"
+        x-data="{ isEditingSummary: false }"
+    >
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">
+                خلاصه درخواست اولیه
+            </h3>
+            <button
+                @click="isEditingSummary = !isEditingSummary"
+                class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+                <svg x-show="!isEditingSummary" class="h-6 w-6 text-gray-600 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                </svg>
+                <svg x-show="isEditingSummary" class="h-6 w-6 text-gray-600 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div x-show="!isEditingSummary" class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+            <div>
+                <p class="text-gray-600 dark:text-gray-400">نوع درخواست انتخاب شده:</p>
+                <p class="font-semibold text-lg text-gray-900 dark:text-gray-100 mt-1">
+                    {{ credit_request.get_request_type_display }}
+                </p>
+            </div>
+            <div>
+                <p class="text-gray-600 dark:text-gray-400">مبلغ درخواستی:</p>
+                <p class="font-bold text-lg text-gray-900 dark:text-gray-100 mt-1">
+                    {{ credit_request.requested_amount|format_with_comma }} تومان
+                </p>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                    ({{ credit_request.requested_amount|to_fawords }} تومان)
+                </p>
+            </div>
+        </div>
+
+        <div x-show="isEditingSummary" class="mt-6">
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="summary_form">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-gray-700 dark:text-gray-300">
+                            {{ form.request_type.label }}
+                        </label>
+                        {{ form.request_type }}
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-700 dark:text-gray-300">
+                            {{ form.requested_amount.label }}
+                        </label>
+                        {{ form.requested_amount }}
+                    </div>
+                </div>
+                <div class="flex justify-end gap-4 pt-4">
+                    <button
+                        type="button"
+                        @click="isEditingSummary = false"
+                        class="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-6 rounded-lg hover:bg-gray-300"
+                    >
+                        انصراف
+                    </button>
+                    <button
+                        type="submit"
+                        class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700"
+                    >
+                        ذخیره تغییرات خلاصه
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow" x-data="{ isEditing: false, showAll: false }">
+
+        <div class="flex justify-between items-center mb-4 border-b dark:border-gray-600 pb-4">
+            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100">جزئیات کامل پرونده</h3>
+            <button @click="isEditing = !isEditing" class="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                <svg x-show="!isEditing" class="h-6 w-6 text-gray-600 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                </svg>
+                <svg x-show="isEditing" style="display: none;" class="h-6 w-6 text-gray-600 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <div x-show="!isEditing" class="space-y-6">
+            <div class="text-left">
+                <button @click="showAll = !showAll" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                    <span x-show="!showAll">نمایش تمام اطلاعات</span>
+                    <span x-show="showAll" style="display: none;">مخفی کردن اطلاعات قبلی</span>
+                </button>
+            </div>
+
+            <div x-data="{ open: true }" class="border dark:border-gray-700 rounded-lg">
+                <button @click="open = !open" class="w-full flex justify-between items-center p-4">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">اطلاعات فردی</h3>
+                    <svg class="w-6 h-6 transform transition-transform" :class="{'rotate-180': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                <div x-show="open" x-collapse.duration.500ms class="p-4 border-t dark:border-gray-700">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
+                        <p><strong>نام کامل:</strong> {{ credit_request.full_name }}</p>
+                        <p><strong>نام پدر:</strong> {{ credit_request.father_name }}</p>
+                        <p><strong>کد ملی:</strong> {{ credit_request.national_id }}</p>
+                        <p><strong>سریال کارت ملی:</strong> {{ credit_request.card_serial }}</p>
+                        <p><strong>تاریخ تولد:</strong> {{ credit_request.birth_date|to_jalali:'%Y/%m/%d'}}</p>
+                        <p><strong>استان محل تولد:</strong> {{ credit_request.birth_place_province }}</p>
+                        <p><strong>شهر محل تولد:</strong> {{ credit_request.birth_place_city }}</p>
+                        <p><strong>شماره تلفن ثابت:</strong> {{ credit_request.landline_number }}</p>
+                        <p><strong>استان محل سکونت:</strong> {{ credit_request.province }}</p>
+                        <p><strong>شهر محل سکونت:</strong> {{ credit_request.city }}</p>
+                        <p><strong>منطقه:</strong> {{ credit_request.area }}</p>
+                        <p class="md:col-span-2"><strong>خیابان و آدرس دقیق:</strong> {{ credit_request.address_line }}</p>
+                        <p><strong>پلاک:</strong> {{ credit_request.plaque }}</p>
+                        <p><strong>واحد:</strong> {{ credit_request.unit|default:"-" }}</p>
+                        <p><strong>کد پستی:</strong> {{ credit_request.postal_code }}</p>
+                        <p class="md:col-span-2"><strong>شماره شبا:</strong> IR{{ credit_request.iban }}</p>
+                        <p><strong>شماره حساب:</strong> {{ credit_request.account_number }}</p>
+                        <P><strong>کد رهگیری پستی:</strong> {{ credit_request.postal_tracking_code }}</P>
+                        <div class="space-y-2"><h4 class="font-semibold text-sm">امضای دیجیتال متقاضی:</h4>
+                            {% if credit_request.applicant_signature %}
+                                <a href="{{ credit_request.applicant_signature.url }}" target="_blank">
+                                    <img src="{{ credit_request.applicant_signature.url }}" alt="امضای متقاضی" class="w-full rounded-lg shadow-md border bg-white dark:border-gray-600">
+                                </a>
+                            {% else %}
+                            <p class="text-gray-500 text-xs">امضا ثبت نشده است.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if credit_request.guarantor_full_name %}
+            <div x-data="{ open: false }" x-show="showAll || {{ is_step2_active|yesno:'true,false' }}" class="border dark:border-gray-700 rounded-lg">
+                <button @click="open = !open" class="w-full flex justify-between items-center p-4">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">اطلاعات ضامن</h3>
+                    <svg class="w-6 h-6 transform transition-transform" :class="{'rotate-180': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                <div x-show="open" x-collapse.duration.500ms class="p-4 border-t dark:border-gray-700">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-700 dark:text-gray-300">
+                        <p><strong>نام کامل ضامن:</strong> {{ credit_request.guarantor_full_name }}</p>
+                        <p><strong>کد ملی ضامن:</strong> {{ credit_request.guarantor_national_id }}</p>
+                        <p><strong>سریال کارت ملی:</strong> {{ credit_request.guarantor_card_serial }}</p>
+                        <p><strong>تاریخ تولد:</strong> {{ credit_request.guarantor_birth_date|to_jalali:'%Y/%m/%d' }}</p>
+                        <p><strong>شماره تماس:</strong> {{ credit_request.guarantor_phone_number }}</p>
+                        <p><strong>رتبه اعتبارسنجی:</strong> {{ credit_request.guarantor_credit_score }}</p>
+                        <p class="md:col-span-2"><strong>آدرس ضامن:</strong> {{ credit_request.guarantor_address }}</p>
+                        <div class="space-y-2">
+                            <h4 class="font-semibold text-sm">امضای دیجیتال ضامن:</h4>
+                            {% if credit_request.guarantor_signature %}
+                                <a href="{{ credit_request.guarantor_signature.url }}" target="_blank">
+                                    <img src="{{ credit_request.guarantor_signature.url }}" alt="امضای ضامن" class="w-full rounded-lg shadow-md border bg-white dark:border-gray-600">
+                                </a>
+                            {% else %}
+                                <p class="text-gray-500 text-xs">امضا ثبت نشده است.</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if show_documents %}
+            <div x-data="{ open: {{ is_step3_active|yesno:'true,false' }} }" x-show="showAll || {{ is_step3_active|yesno:'true,false' }}" class="border dark:border-gray-700 rounded-lg">
+                <button @click="open = !open" class="w-full flex justify-between items-center p-4">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">مدارک بارگذاری شده</h3>
+                    <svg class="w-6 h-6 transform transition-transform" :class="{'rotate-180': open}" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                <div x-show="open" x-collapse.duration.500ms class="p-4 border-t dark:border-gray-700 space-y-6">
+                    <div>
+                        <h4 class="font-semibold mb-2 text-gray-700 dark:text-gray-300">مدارک متقاضی:</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            {% if credit_request.applicant_id_card_front %}
+                                <a href="{{ credit_request.applicant_id_card_front.url }}" target="_blank" class="block group">
+                                    <img src="{{ credit_request.applicant_id_card_front.url }}" alt="روی کارت ملی متقاضی" class="w-full h-auto rounded-lg shadow-md border dark:border-gray-600 group-hover:opacity-80 transition-opacity">
+                                    <p class="text-center text-xs mt-1">روی کارت ملی</p>
+                                </a>
+                            {% endif %}
+                            {% if credit_request.applicant_id_card_back %}
+                                <a href="{{ credit_request.applicant_id_card_back.url }}" target="_blank" class="block group">
+                                    <img src="{{ credit_request.applicant_id_card_back.url }}" alt="پشت کارت ملی متقاضی" class="w-full h-auto rounded-lg shadow-md border dark:border-gray-600 group-hover:opacity-80 transition-opacity">
+                                    <p class="text-center text-xs mt-1">پشت کارت ملی</p>
+                                </a>
+                            {% endif %}
+                            {% if credit_request.applicant_birth_certificate %}
+                                <a href="{{ credit_request.applicant_birth_certificate.url }}" target="_blank" class="block group">
+                                    <img src="{{ credit_request.applicant_birth_certificate.url }}" alt="شناسنامه متقاضی" class="w-full h-auto rounded-lg shadow-md border dark:border-gray-600 group-hover:opacity-80 transition-opacity">
+                                    <p class="text-center text-xs mt-1">شناسنامه</p>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold mb-2 text-gray-700 dark:text-gray-300">مدارک ضامن:</h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                            {% if credit_request.guarantor_id_card_front %}
+                                <a href="{{ credit_request.guarantor_id_card_front.url }}" target="_blank" class="block group">
+                                    <img src="{{ credit_request.guarantor_id_card_front.url }}" alt="روی کارت ملی ضامن" class="w-full h-auto rounded-lg shadow-md border dark:border-gray-600 group-hover:opacity-80 transition-opacity">
+                                    <p class="text-center text-xs mt-1">روی کارت ملی</p>
+                                </a>
+                            {% endif %}
+                            {% if credit_request.guarantor_id_card_back %}
+                                <a href="{{ credit_request.guarantor_id_card_back.url }}" target="_blank" class="block group">
+                                    <img src="{{ credit_request.guarantor_id_card_back.url }}" alt="پشت کارت ملی ضامن" class="w-full h-auto rounded-lg shadow-md border dark:border-gray-600 group-hover:opacity-80 transition-opacity">
+                                    <p class="text-center text-xs mt-1">پشت کارت ملی</p>
+                                </a>
+                            {% endif %}
+                            {% if credit_request.guarantor_birth_certificate %}
+                                <a href="{{ credit_request.guarantor_birth_certificate.url }}" target="_blank" class="block group">
+                                    <img src="{{ credit_request.guarantor_birth_certificate.url }}" alt="شناسنامه ضامن" class="w-full h-auto rounded-lg shadow-md border dark:border-gray-600 group-hover:opacity-80 transition-opacity">
+                                    <p class="text-center text-xs mt-1">شناسنامه</p>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <div x-show="isEditing" style="display: none;">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                <fieldset class="border-t pt-4 dark:border-gray-600">
+                    <legend class="text-lg font-semibold px-2">اطلاعات هویتی</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div><label class="block text-sm">{{ form.full_name.label }}</label>{{ form.full_name }}</div>
+                        <div><label class="block text-sm">{{ form.father_name.label }}</label>{{ form.father_name }}</div>
+                        <div><label class="block text-sm">{{ form.national_id.label }}</label>{{ form.national_id }}</div>
+                        <div><label class="block text-sm">{{ form.card_serial.label }}</label>{{ form.card_serial }}</div>
+                        <div><label class="block text-sm">{{ form.birth_date.label }}</label>{{ form.birth_date }}</div>
+                        <div><label class="block text-sm">{{ form.birth_place_province.label }}</label>{{ form.birth_place_province }}</div>
+                        <div><label class="block text-sm">{{ form.birth_place_city.label }}</label>{{ form.birth_place_city }}</div>
+                        <div><label class="block text-sm">{{ form.landline_number.label }}</label>{{ form.landline_number }}</div>
+                        <div><label class="block text-sm">{{ form.province.label }}</label>{{ form.province }}</div>
+                        <div><label class="block text-sm">{{ form.city.label }}</label>{{ form.city }}</div>
+                        <div><label class="block text-sm">{{ form.area.label }}</label>{{ form.area }}</div>
+                        <div class="md:col-span-3"><label class="block text-sm">{{ form.address_line.label }}</label>{{ form.address_line }}</div>
+                        <div><label class="block text-sm">{{ form.plaque.label }}</label>{{ form.plaque }}</div>
+                        <div><label class="block text-sm">{{ form.unit.label }}</label>{{ form.unit }}</div>
+                        <div><label class="block text-sm">{{ form.postal_code.label }}</label>{{ form.postal_code }}</div>
+                        <div class="md:col-span-3"><label class="block text-sm">{{ form.iban.label }}</label>{{ form.iban }}</div>
+                        <div><label class="block text-sm">{{ form.account_number.label }}</label>{{ form.account_number }}</div>
+                    </div>
+                </fieldset>
+
+                {% if form.guarantor_full_name %}
+                <fieldset class="border-t pt-4 dark:border-gray-600">
+                    <legend class="text-lg font-semibold px-2">اطلاعات ضامن</legend>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <div><label class="block text-sm">{{ form.guarantor_full_name.label }}</label>{{ form.guarantor_full_name }}</div>
+                        <div><label class="block text-sm">{{ form.guarantor_national_id.label }}</label>{{ form.guarantor_national_id }}</div>
+                        <div><label class="block text-sm">{{ form.guarantor_card_serial.label }}</label>{{ form.guarantor_card_serial }}</div>
+                        <div><label class="block text-sm">{{ form.guarantor_birth_date.label }}</label>{{ form.guarantor_birth_date }}</div>
+                        <div><label class="block text-sm">{{ form.guarantor_phone_number.label }}</label>{{ form.guarantor_phone_number }}</div>
+                        <div><label class="block text-sm">{{ form.guarantor_credit_score.label }}</label>{{ form.guarantor_credit_score }}</div>
+                        <div class="md:col-span-3"><label class="block text-sm">{{ form.guarantor_address.label }}</label>{{ form.guarantor_address }}</div>
+                        <div class="md:col-span-3">{{ form.guarantor_consent }} <label class="inline-block mr-2">{{ form.guarantor_consent.label }}</label></div>
+                    </div>
+                </fieldset>
+                {% endif %}
+
+                {% if form.id_card_image %}
+                <fieldset class="border-t pt-4 dark:border-gray-600">
+                    <legend class="text-lg font-semibold px-2">مدارک</legend>
+                    <div class="mt-4">
+                        <div><label class="block text-sm">{{ form.id_card_image.label }}</label>{{ form.id_card_image }}</div>
+                        {% if credit_request.id_card_image %}
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">تصویر فعلی: <a href="{{ credit_request.id_card_image.url }}" target="_blank" class="text-blue-500 hover:underline">مشاهده</a></p>
+                        {% endif %}
+                    </div>
+                </fieldset>
+                {% endif %}
+
+                <div class="flex justify-end gap-4 pt-4 border-t dark:border-gray-600">
+                    <button type="button" @click="isEditing = false" class="bg-gray-200 dark:bg-gray-600 text-gray-800 dark:text-gray-200 font-bold py-2 px-6 rounded-lg hover:bg-gray-300">انصراف</button>
+                    <button type="submit" class="bg-green-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-700">ذخیره تغییرات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">عملیات کارشناس</h3>
+        
+        {% if credit_request.status == 'final_submission' %}
+            {% if request.user.is_superuser or request.user.user_type == 'ADMIN' %}
+                <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">کاربر تمام مراحل را تکمیل کرده و منتظر تایید نهایی شما برای صدور اعتبار است.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <form method="post" class="flex items-end">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="approve">
+                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700">تایید نهایی و صدور اعتبار</button>
+                    </form>
+                    <form method="post" class="space-y-2">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="reject">
+                        <select name="rejection_step" class="w-full p-2 border bg-gray-50 rounded-md">
+                            <option value="final">رد نهایی درخواست</option>
+                            <option value="1">ارجاع به مرحله ۱</option>
+                            <option value="2">ارجاع به مرحله ۲</option>
+                            <option value="3">ارجاع به مرحله ۳</option>
+                        </select>
+                        <textarea name="rejection_reason" rows="2" class="w-full p-2 border rounded-md bg-gray-50" placeholder="دلیل رد شدن..."></textarea>
+                        <button type="submit" class="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700">رد کردن و ارجاع</button>
+                    </form>
+                </div>
+            {% else %}
+                <div class="text-center p-4 bg-yellow-50 dark:bg-yellow-900/50 rounded-md text-yellow-800 dark:text-yellow-300">
+                    <p>این درخواست منتظر تایید نهایی توسط مدیر است.</p>
+                </div>
+            {% endif %}
+        {% elif credit_request.status != 'approved' and credit_request.status != 'completed' and credit_request.status != 'rejected' %}
+            <p class="text-sm text-gray-600 dark:text-gray-300 mb-4">این مرحله توسط کاربر برای شما ارسال شده است. لطفاً پس از بررسی، آن را تایید یا رد کنید.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <form method="post" class="flex items-end">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="approve">
+                    <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-700">تایید این مرحله</button>
+                </form>
+                <form method="post" class="space-y-2">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="reject">
+                    <select name="rejection_step" class="w-full p-2 border bg-gray-50 rounded-md">
+                        <option value="1">ارجاع به مرحله ۱</option>
+                        <option value="2">ارجاع به مرحله ۲</option>
+                        <option value="3">ارجاع به مرحله ۳</option>
+                    </select>
+                    <textarea name="rejection_reason" rows="2" class="w-full p-2 border rounded-md bg-gray-50" placeholder="دلیل رد شدن..."></textarea>
+                    <button type="submit" class="w-full bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700">رد کردن و ارجاع</button>
+                </form>
+            </div>
+        
+        {% elif credit_request.status == 'approved' %}
+            <div class="bg-blue-50 dark:bg-blue-900/50 p-4 rounded-lg">
+                <h4 class="font-semibold text-blue-800 dark:text-blue-300">ثبت کد رهگیری پستی</h4>
+                <p class="text-xs text-blue-700 dark:text-blue-400 mt-1 mb-2">این درخواست تایید نهایی شده است. پس از ارسال مدارک، کد رهگیری را در این قسمت وارد کنید.</p>
+                <form method="post" class="flex items-center">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="submit_tracking">
+                    <input type="text" name="postal_tracking_code" class="w-full p-2 border rounded-r-md text-left" dir="ltr" placeholder="کد ۲۴ رقمی پست...">
+                    <button type="submit" class="bg-blue-600 text-white p-2 rounded-l-md hover:bg-blue-700">ثبت کد</button>
+                </form>
+            </div>
+
+        {% else %}
+            <div class="text-center p-4 bg-gray-100 dark:bg-gray-700 rounded-md">
+                <p class="text-gray-600 dark:text-gray-300">عملیات برای این درخواست به پایان رسیده است.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="hidden">
+    <svg id="icon-edit"><path d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
+    <svg id="icon-close"><path d="M6 18L18 6M6 6l12 12" /></svg>
+</div>
+{% endblock %}

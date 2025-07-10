@@ -1,0 +1,26 @@
+{% extends 'staff_panel/base_staff.html' %}
+{% load jalali_tags %}
+
+{% block title %}داشبورد مدیریت کل{% endblock %}
+{% block page_title %}داشبورد مدیریت کل{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow text-center">
+        <h4 class="text-gray-500 dark:text-gray-400">تعداد کل متقاضیان</h4>
+        <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ total_users }}</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow text-center">
+        <h4 class="text-gray-500 dark:text-gray-400">تعداد کل درخواست‌ها</h4>
+        <p class="text-3xl font-bold text-orange-400 dark:text-orange-300">{{ total_requests }}</p>
+    </div>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow text-center">
+        <h4 class="text-gray-500 dark:text-gray-400">درخواست های تایید شده</h4>
+        <p class="text-3xl font-bold text-green-600 dark:text-green-500">{{ approved_requests }}</p>
+    </div>
+    <div class="bg-wighte dark:bg-gray-800 p-6 rounded-lg shadow text-center">
+        <h4 class="text-gray-500 dark:text-gray-400">درخواست های تایید نشده</h4>
+        <p class="text-3xl font-bold text-red-600 dark:text-red-500">{{ rejected_requests }}</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load jalali_tags %}
+{% block title %}لیست تیکت‌ها{% endblock %}
+{% block page_title %}تیکت‌های پشتیبانی{% endblock %}
+
+{% block content %}
+<div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow max-w-5xl mx-auto">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="text-xl font-bold text-gray-800 dark:text-white">لیست تیکت‌های شما</h3>
+        <a href="{% url 'ticket_create' %}" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+            ایجاد تیکت جدید
+        </a>
+    </div>
+
+    {% if tickets %}
+    <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-right text-gray-800 dark:text-gray-100">
+            <thead class="text-xs bg-gray-100 dark:bg-gray-700 uppercase text-gray-700 dark:text-gray-200">
+                <tr>
+                    <th class="px-4 py-3">عنوان</th>
+                    <th class="px-4 py-3">وضعیت</th>
+                    <th class="px-4 py-3">تاریخ ایجاد</th>
+                    <th class="px-4 py-3 text-center">مشاهده</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-600">
+                {% for ticket in tickets %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <td class="px-4 py-3 font-medium">{{ ticket.title }}</td>
+                    <td class="px-4 py-3">
+                        <span class="text-sm font-semibold px-2 py-1 rounded-full
+                            {% if ticket.status == 'open' %}
+                                bg-green-100 text-green-800 dark:bg-green-800 dark:text-white
+                            {% else %}
+                                bg-gray-200 text-gray-700 dark:bg-gray-600 dark:text-gray-100
+                            {% endif %}">
+                            {{ ticket.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="px-4 py-3">{{ ticket.created_at|to_jalali:'%Y/%m/%d - %H:%M'}}</td>
+                    <td class="px-4 py-3 text-center">
+                        <a href="{% url 'ticket_detail' ticket.pk %}" class="text-blue-600 hover:underline">نمایش</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center text-gray-600 dark:text-gray-300 mt-10">
+        <p>تاکنون هیچ تیکتی ثبت نکرده‌اید.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% load jalali_tags %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>چاپ پرونده - {{ customer.get_full_name }}</title>
+    <style>
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/Vazirmatn-Regular.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background-color: #fff;
+            width: 210mm;
+            margin: 0 auto;
+        }
+        .container {
+            padding: 15mm;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 5px 0 0;
+            font-size: 14px;
+            color: #555;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            color: #000;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        .grid-item {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            font-size: 13px;
+        }
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        strong {
+            color: #000;
+        }
+        @media print {
+            body {
+                background-color: #fff;
+            }
+        }
+    </style>
+</head>
+<body onload="window.print();">
+    <div class="container">
+        <div class="header">
+            <h1>پرونده اعتباری مشتری</h1>
+            <p>اعتبارینو بازرگانی محمدی</p>
+        </div>
+        
+        {% if credit_request %}
+            <div class="section">
+                <h2 class="section-title">اطلاعات هویتی متقاضی</h2>
+                <div class="grid">
+                    <div class="grid-item"><strong>نام و نام خانوادگی:</strong> {{ credit_request.full_name|default:"-" }}</div>
+                    <div class="grid-item"><strong>نام پدر:</strong> {{ credit_request.father_name|default:"-" }}</div>
+                    <div class="grid-item"><strong>کد ملی:</strong> {{ credit_request.national_id|default:"-" }}</div>
+                    <div class="grid-item"><strong>سریال کارت ملی:</strong> {{ credit_request.card_serial|default:"-" }}</div>
+                    <div class="grid-item"><strong>تاریخ تولد:</strong> {{ credit_request.birth_date|to_jalali:'%Y/%m/%d' }}</div>
+                    <div class="grid-item"><strong>محل تولد:</strong> {{ credit_request.birth_place_province }} - {{ credit_request.birth_place_city }}</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">اطلاعات تماس و آدرس</h2>
+                <div class="grid">
+                    <div class="grid-item"><strong>شماره موبایل:</strong> {{ credit_request.applicant.phone_number }}</div>
+                    <div class="grid-item"><strong>تلفن ثابت:</strong> {{ credit_request.landline_number|default:"-" }}</div>
+                    <div class="grid-item"><strong>استان:</strong> {{ credit_request.province|default:"-" }}</div>
+                    <div class="grid-item"><strong>شهر:</strong> {{ credit_request.city|default:"-" }}</div>
+                    <div class="grid-item"><strong>منطقه:</strong> {{ credit_request.area|default:"-" }}</div>
+                    <div class="grid-item full-width"><strong>آدرس:</strong> {{ credit_request.address_line|default:"-" }}</div>
+                    <div class="grid-item"><strong>پلاک:</strong> {{ credit_request.plaque|default:"-" }}</div>
+                    <div class="grid-item"><strong>واحد:</strong> {{ credit_request.unit|default:"-" }}</div>
+                    <div class="grid-item"><strong>کد پستی:</strong> {{ credit_request.postal_code|default:"-" }}</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">اطلاعات بانکی</h2>
+                <div class="grid">
+                    <div class="grid-item"><strong>شماره شبا (بدون IR):</strong> {{ credit_request.iban|default:"-" }}</div>
+                    <div class="grid-item"><strong>شماره حساب:</strong> {{ credit_request.account_number|default:"-" }}</div>
+                </div>
+            </div>
+
+            {% if credit_request.guarantor_full_name %}
+                <div class="section">
+                    <h2 class="section-title">اطلاعات ضامن</h2>
+                    <div class="grid">
+                        <div class="grid-item"><strong>نام ضامن:</strong> {{ credit_request.guarantor_full_name }}</div>
+                        <div class="grid-item"><strong>کد ملی ضامن:</strong> {{ credit_request.guarantor_national_id }}</div>
+                        <div class="grid-item"><strong>سریال کارت ملی ضامن:</strong> {{ credit_request.guarantor_card_serial }}</div>
+                        <div class="grid-item"><strong>تاریخ تولد ضامن:</strong> {{ credit_request.guarantor_birth_date|to_jalali:'%Y/%m/%d' }}</div>
+                        <div class="grid-item"><strong>شماره تماس ضامن:</strong> {{ credit_request.guarantor_phone_number }}</div>
+                        <div class="grid-item"><strong>رتبه اعتبارسنجی ضامن:</strong> {{ credit_request.guarantor_credit_score }}</div>
+                        <div class="grid-item full-width"><strong>آدرس ضامن:</strong> {{ credit_request.guarantor_address }}</div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="section">
+                <h2 class="section-title">وضعیت نهایی پرونده</h2>
+                <div class="grid">
+                    <div class="grid-item"><strong>وضعیت فعلی:</strong> {{ credit_request.get_status_display }}</div>
+                    {% if credit_request.postal_tracking_code %}
+                        <div class="grid-item"><strong>کد رهگیری پستی:</strong> {{ credit_request.postal_tracking_code }}</div>
+                    {% endif %}
+                    {% if credit_request.rejection_reason %}
+                        <div class="grid-item full-width"><strong>دلیل رد شدن:</strong> {{ credit_request.rejection_reason }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% else %}
+            <p style="text-align: center; color: #888;">این کاربر هنوز درخواست اعتباری ثبت نکرده است.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
