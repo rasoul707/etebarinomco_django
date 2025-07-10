@@ -11,6 +11,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # کپی پروژه
 COPY . .
 
+RUN mkdir -p /app/staticfiles
+
 # اجرای migrations و جمع‌آوری فایل‌های استاتیک
 RUN python manage.py migrate --noinput && \
     python manage.py collectstatic --noinput
