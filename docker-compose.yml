@@ -82,7 +82,7 @@ services:
       - .env
     volumes:
       - ./django_app:/app
-      - static_volume:/app/static
+      - static_volume:/app/staticfiles
       - media_volume:/app/media
     labels:
       - "traefik.enable=true"
