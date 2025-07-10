@@ -1,75 +1,75 @@
 services:
 
-  etebar-traefik:
-    container_name: etebar-traefik
-    image: traefik:latest
-    command:
-      - "--log.level=DEBUG"
+  # etebar-traefik:
+  #   container_name: etebar-traefik
+  #   image: traefik:latest
+  #   command:
+  #     - "--log.level=DEBUG"
 
-      #Traefik Dashboard
-      - "--api=true"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.network=my-net"
-      - "--providers.docker.exposedbydefault=false"
+  #     #Traefik Dashboard
+  #     - "--api=true"
+  #     - "--api.insecure=true"
+  #     - "--providers.docker=true"
+  #     - "--providers.docker.network=my-net"
+  #     - "--providers.docker.exposedbydefault=false"
       
-      # Set entryPoints
-      - "--entryPoints.http.address=:80"
-      - "--entryPoints.https.address=:443"
-      - "--entryPoints.https.http.tls=true"
-      - "--entryPoints.http.forwardedHeaders.insecure=true"
-      - "--entryPoints.https.forwardedHeaders.insecure=true"
+  #     # Set entryPoints
+  #     - "--entryPoints.http.address=:80"
+  #     - "--entryPoints.https.address=:443"
+  #     - "--entryPoints.https.http.tls=true"
+  #     - "--entryPoints.http.forwardedHeaders.insecure=true"
+  #     - "--entryPoints.https.forwardedHeaders.insecure=true"
 
-      # Enabling SSL & HTTPS
-      - "--certificatesResolvers.myresolver.acme.httpChallenge=true"
-      - "--certificatesResolvers.myresolver.acme.httpChallenge.entryPoint=http"
-      - "--certificatesResolvers.myresolver.acme.email=${EMAIL}"
-      - "--certificatesResolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+  #     # Enabling SSL & HTTPS
+  #     - "--certificatesResolvers.myresolver.acme.httpChallenge=true"
+  #     - "--certificatesResolvers.myresolver.acme.httpChallenge.entryPoint=http"
+  #     - "--certificatesResolvers.myresolver.acme.email=${EMAIL}"
+  #     - "--certificatesResolvers.myresolver.acme.storage=/letsencrypt/acme.json"
 
-    # Only expose Traefik ports
-    ports:
-      - "80:80"
-      - "443:443"
+  #   # Only expose Traefik ports
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
 
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
+  #   dns:
+  #     - 8.8.8.8
+  #     - 8.8.4.4
 
-    restart: unless-stopped
+  #   restart: unless-stopped
     
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./letsencrypt:/letsencrypt
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - ./letsencrypt:/letsencrypt
 
-    networks:
-      - my-net
+  #   networks:
+  #     - my-net
 
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=my-net"
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.docker.network=my-net"
 
-      # HTTP
-      - "traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DASHBOARD_ADDRESS}`)"
-      - "traefik.http.routers.traefik.entrypoints=http"
-      - "traefik.http.routers.traefik.service=traefik-service"
+  #     # HTTP
+  #     - "traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DASHBOARD_ADDRESS}`)"
+  #     - "traefik.http.routers.traefik.entrypoints=http"
+  #     - "traefik.http.routers.traefik.service=traefik-service"
 
-      # HTTPS
-      - "traefik.http.routers.traefik-secure.rule=Host(`${TRAEFIK_DASHBOARD_ADDRESS}`)"
-      - "traefik.http.routers.traefik-secure.entrypoints=https"
-      - "traefik.http.routers.traefik-secure.tls=true"
-      - "traefik.http.routers.traefik-secure.tls.certresolver=myresolver"
-      - "traefik.http.routers.traefik-secure.service=traefik-service"
+  #     # HTTPS
+  #     - "traefik.http.routers.traefik-secure.rule=Host(`${TRAEFIK_DASHBOARD_ADDRESS}`)"
+  #     - "traefik.http.routers.traefik-secure.entrypoints=https"
+  #     - "traefik.http.routers.traefik-secure.tls=true"
+  #     - "traefik.http.routers.traefik-secure.tls.certresolver=myresolver"
+  #     - "traefik.http.routers.traefik-secure.service=traefik-service"
 
-      # Redirect HTTP to HTTPS
-      - "traefik.http.middlewares.http-to-https.redirectScheme.scheme=https"
-      - "traefik.http.routers.traefik.middlewares=http-to-https"
+  #     # Redirect HTTP to HTTPS
+  #     - "traefik.http.middlewares.http-to-https.redirectScheme.scheme=https"
+  #     - "traefik.http.routers.traefik.middlewares=http-to-https"
 
-      # Load balancer
-      - "traefik.http.services.traefik-service.loadbalancer.server.port=8080"
+  #     # Load balancer
+  #     - "traefik.http.services.traefik-service.loadbalancer.server.port=8080"
 
-      # Auth
-      - "traefik.http.middlewares.web-auth.basicauth.users=${TRAEFIK_DASHBOARD_USERPASS}"
-      - "traefik.http.routers.traefik_dashboard-secure.middlewares=web-auth"
+  #     # Auth
+  #     - "traefik.http.middlewares.web-auth.basicauth.users=${TRAEFIK_DASHBOARD_USERPASS}"
+  #     - "traefik.http.routers.traefik_dashboard-secure.middlewares=web-auth"
 
 
 
@@ -78,43 +78,41 @@ services:
     build: ./
     container_name: etebar-web
     restart: unless-stopped
-    env_file:
-      - .env
+
     volumes:
       - ./django_app:/app
       - static_volume:/app/staticfiles
       - media_volume:/app/media
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=my-net"
+      - "traefik.docker.network=rahsaz-net"
 
       # HTTP
-      - "traefik.http.routers.web.rule=Host(`${WEB_ADDRESS}`)"
-      - "traefik.http.routers.web.entrypoints=http"
-      - "traefik.http.routers.web.service=web-service"
+      - "traefik.http.routers.etebar-web.rule=Host(`etebarinomco.top`)"
+      - "traefik.http.routers.etebar-web.entrypoints=http"
+      - "traefik.http.routers.etebar-web.service=web-service"
 
       # HTTPS
-      - "traefik.http.routers.web-secure.rule=Host(`${WEB_ADDRESS}`)"
-      - "traefik.http.routers.web-secure.entrypoints=https"
-      - "traefik.http.routers.web-secure.tls=true"
-      - "traefik.http.routers.web-secure.tls.certresolver=myresolver"
-      - "traefik.http.routers.web-secure.service=web-service"
+      - "traefik.http.routers.etebar-web-secure.rule=Host(`etebarinomco.top`)"
+      - "traefik.http.routers.etebar-web-secure.entrypoints=https"
+      - "traefik.http.routers.etebar-web-secure.tls=true"
+      - "traefik.http.routers.etebar-web-secure.tls.certresolver=myresolver"
+      - "traefik.http.routers.etebar-web-secure.service=etebar-web-service"
 
       # Redirect HTTP to HTTPS
       - "traefik.http.middlewares.http-to-https.redirectScheme.scheme=https"
-      - "traefik.http.routers.web.middlewares=http-to-https"
+      - "traefik.http.routers.etebar-web.middlewares=http-to-https"
 
       # Load balancer
-      - "traefik.http.services.web-service.loadbalancer.server.port=8000"
-
+      - "traefik.http.services.etebar-web-service.loadbalancer.server.port=8000"
 
 
     networks:
-      - my-net
+      - rahsaz-net
 
 networks:
-  my-net:
-    name: my-net
+  rahsaz-net:
+    name: rahsaz-net
 
 volumes:
   static_volume:
