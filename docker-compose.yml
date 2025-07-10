@@ -75,7 +75,7 @@ services:
 
 
   django:
-    build: ./django_app
+    build: ./
     container_name: django
     restart: unless-stopped
     env_file:
