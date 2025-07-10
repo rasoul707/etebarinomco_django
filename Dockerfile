@@ -21,4 +21,4 @@ RUN python manage.py migrate --noinput && \
 EXPOSE 8000
 
 # دستور اجرا
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "etebar-web.config.wsgi"]
