@@ -82,7 +82,6 @@ services:
     restart: unless-stopped
 
     volumes:
-      # - .:/app
       - ./db.sqlite3:/app/db.sqlite3
       - static_volume:/app/staticfiles
       - media_volume:/app/media
