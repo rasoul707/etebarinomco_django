@@ -82,7 +82,8 @@ services:
     restart: unless-stopped
 
     volumes:
-      - ./django_app:/app
+      # - .:/app
+      - ./db.sqlite3:/app/db.sqlite3
       - static_volume:/app/staticfiles
       - media_volume:/app/media
 
