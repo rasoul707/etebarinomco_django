@@ -88,28 +88,28 @@ services:
 
     ports:
       - "8888:8000"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=rahsaz-net"
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.docker.network=rahsaz-net"
 
-      # HTTP
-      - "traefik.http.routers.etebar-web.rule=Host(`etebarinomco.top`)"
-      - "traefik.http.routers.etebar-web.entrypoints=http"
-      - "traefik.http.routers.etebar-web.service=etebar-web-service"
+    #   # HTTP
+    #   - "traefik.http.routers.etebar-web.rule=Host(`etebarinomco.top`)"
+    #   - "traefik.http.routers.etebar-web.entrypoints=http"
+    #   - "traefik.http.routers.etebar-web.service=etebar-web-service"
 
-      # HTTPS
-      - "traefik.http.routers.etebar-web-secure.rule=Host(`etebarinomco.top`)"
-      - "traefik.http.routers.etebar-web-secure.entrypoints=https"
-      - "traefik.http.routers.etebar-web-secure.tls=true"
-      - "traefik.http.routers.etebar-web-secure.tls.certresolver=myresolver"
-      - "traefik.http.routers.etebar-web-secure.service=etebar-web-service"
+    #   # HTTPS
+    #   - "traefik.http.routers.etebar-web-secure.rule=Host(`etebarinomco.top`)"
+    #   - "traefik.http.routers.etebar-web-secure.entrypoints=https"
+    #   - "traefik.http.routers.etebar-web-secure.tls=true"
+    #   - "traefik.http.routers.etebar-web-secure.tls.certresolver=myresolver"
+    #   - "traefik.http.routers.etebar-web-secure.service=etebar-web-service"
 
-      # Redirect HTTP to HTTPS
-      - "traefik.http.middlewares.http-to-https.redirectScheme.scheme=https"
-      - "traefik.http.routers.etebar-web.middlewares=http-to-https"
+    #   # Redirect HTTP to HTTPS
+    #   - "traefik.http.middlewares.http-to-https.redirectScheme.scheme=https"
+    #   - "traefik.http.routers.etebar-web.middlewares=http-to-https"
 
-      # Load balancer
-      - "traefik.http.services.etebar-web-service.loadbalancer.server.port=8000"
+    #   # Load balancer
+    #   - "traefik.http.services.etebar-web-service.loadbalancer.server.port=8000"
 
     
     # command: >
@@ -117,13 +117,13 @@ services:
     #     python manage.py migrate && 
 
 
-    networks:
-      - rahsaz-net
+#     networks:
+#       - rahsaz-net
 
-networks:
-  rahsaz-net:
-    name: rahsaz-net
-    external: true
+# networks:
+#   rahsaz-net:
+#     name: rahsaz-net
+#     external: true
 
 volumes:
   static_volume:
