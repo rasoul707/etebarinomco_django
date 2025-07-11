@@ -93,12 +93,12 @@ services:
       - "traefik.docker.network=rahsaz-net"
 
       # HTTP
-      - "traefik.http.routers.etebar-web.rule=Host(`${PGSQL_ADDRESS}`)"
+      - "traefik.http.routers.etebar-web.rule=Host(`etebarinomco.top`)"
       - "traefik.http.routers.etebar-web.entrypoints=http"
       - "traefik.http.routers.etebar-web.service=etebar-web-service"
 
       # HTTPS
-      - "traefik.http.routers.etebar-web-secure.rule=Host(`${PGSQL_ADDRESS}`)"
+      - "traefik.http.routers.etebar-web-secure.rule=Host(`etebarinomco.top`)"
       - "traefik.http.routers.etebar-web-secure.entrypoints=https"
       - "traefik.http.routers.etebar-web-secure.tls=true"
       - "traefik.http.routers.etebar-web-secure.tls.certresolver=myresolver"
