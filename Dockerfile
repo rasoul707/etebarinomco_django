@@ -21,4 +21,4 @@ RUN python manage.py migrate --noinput && \
 EXPOSE 8000
 
 # دستور اجرا
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "config.wsgi:application"]
+CMD ["sh", "-c", "PYTHONPATH=/app gunicorn --bind 0.0.0.0:8000 config.wsgi:application"]
