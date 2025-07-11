@@ -12,6 +12,7 @@ from .views import (
     request_initial_view,
     signature_view,
     validation_payment_view,
+    validation_document_view,
     subscription_payment_view,
     guarantor_signature_view,
 )
@@ -20,6 +21,7 @@ from .views import (
 urlpatterns = [
     path('start/', request_start_view, name='request_start'),
     path('initial/', request_initial_view, name='request_initial'),
+    path('request/validation_document/', validation_document_view, name='validation_document'),
     path('request/step1/', create_request_step1, name='create_request_step1'),
     path('request/step2/', create_request_step2, name='create_request_step2'),
     path('request/step3/', create_request_step3, name='create_request_step3'),

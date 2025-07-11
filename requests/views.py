@@ -182,7 +182,7 @@ def request_start_view(request):
             payment_receipt=payment_receipt_file,
         )
         
-        return redirect('request_initial')
+        return redirect('validation_document')
 
     return render(request, 'requests/request_start.html')
 
@@ -265,6 +265,27 @@ def validation_payment_view(request):
 
     return render(request, 'requests/validation_payment.html')
 
+
+
+
+
+@login_required
+def validation_document_view(request):
+    credit_request = get_object_or_404(CreditRequest, applicant=request.user)
+
+    if request.method == 'POST':
+        validation_document_file = request.FILES.get('validation_document')
+
+        if not validation_document_file:
+            return render(request, 'requests/validation_document.html', {'error': 'لطفاً سند اعتبار سنجی را ارسال کنید.'})
+        
+        credit_request.validation_document=validation_document_file
+        credit_request.status = 'step1_draft'
+        credit_request.save()
+
+        return redirect('request_initial')
+
+    return render(request, 'requests/validation_document.html')
 
 
 
