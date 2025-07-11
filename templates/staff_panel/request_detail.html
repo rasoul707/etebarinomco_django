@@ -217,7 +217,7 @@
                 </div>
             </div>
 
-            
+
             <div class="border dark:border-gray-700 rounded-lg">
                 <button @click="open = !open" class="w-full flex justify-between items-center p-4">
                     <h3 class="text-lg font-bold text-gray-800 dark:text-gray-100">اعتبار سنجی</h3>
@@ -226,7 +226,7 @@
                 <div x-show="open" x-collapse.duration.500ms class="p-4 border-t dark:border-gray-700 space-y-6">
                     <div>
                         {% if credit_request.validation_document %}
-                            <a href="{{ credit_request.payment_receipt.url }}" target="_blank" class="block group">
+                            <a href="{{ credit_request.validation_document.url }}" target="_blank" class="block group">
                                 <button type="button" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700">مشاهده</button>
                             </a>
                         {% else %}
