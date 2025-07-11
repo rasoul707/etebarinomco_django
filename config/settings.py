@@ -19,6 +19,24 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'etebarinomco.top']
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Application definition
 
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://etebarinomco.top',
+    'http://etebarinomco.top',
+]
+
+
+
+CORS_ALLOWED_ORIGINS = [
+    "https://etebarinomco.top",
+    "http://etebarinomco.top",
+]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -26,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     #My App
     'accounts',
     'requests',
@@ -42,6 +61,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
