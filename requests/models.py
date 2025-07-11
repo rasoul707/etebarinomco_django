@@ -53,6 +53,14 @@ class CreditRequest(models.Model):
     )
 
 
+    validation_document = models.FileField(
+        upload_to='validation_document/',
+        verbose_name="سند اعتبار سنجی",
+        blank=True,
+        null=True
+    )
+
+
     full_name = models.CharField(max_length=100, verbose_name="نام و نام خانوادگی", blank=True, null=True)
     father_name = models.CharField(max_length=100, verbose_name="نام پدر", blank=False, null=True )
     national_id = models.CharField(max_length=10, verbose_name="کد ملی", blank=False, null=True)
