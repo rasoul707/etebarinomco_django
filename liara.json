@@ -1,0 +1,20 @@
+{
+    "django": {
+        "mirror": true,
+        "pythonVersion": "3.12",
+        "timezone": "Iran/Tehran",
+        "compileMessages": false,
+        "modifySettings": true,
+        "geospatial": false
+    },
+    "disks":[
+        {
+            "name": "database",
+            "mountTo": "database"
+        },
+        {
+            "name": "media",
+            "mountTo": "media"
+        }
+    ]
+}
