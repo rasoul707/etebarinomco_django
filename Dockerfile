@@ -14,8 +14,7 @@ COPY . .
 RUN mkdir -p /app/staticfiles
 
 # اجرای migrations و جمع‌آوری فایل‌های استاتیک
-RUN python manage.py migrate --noinput && \
-    python manage.py collectstatic --noinput
+RUN python manage.py collectstatic --noinput
 
 # پورت مورد استفاده
 EXPOSE 8000
