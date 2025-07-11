@@ -1,5 +1,5 @@
 # استفاده از تصویر رسمی پایتون
-FROM python:3.11.9-slim
+FROM python:3.11.9-slim-bookworm
 
 # تنظیم محیط کار
 WORKDIR /app
